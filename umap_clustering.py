@@ -9,13 +9,14 @@ import seaborn as sns
 # Loading Data
 alltrails = pd.read_csv('alltrails-data.csv')
 chat = pd.read_csv('ChatGPT_scores.csv')
+print(chat.columns.tolist())
 
 # Encoding columns
 alltrails['city_encoded'], uniques = pd.factorize(alltrails['city_name'])
 alltrails['route_type_encoded'], uniques = pd.factorize(alltrails['route_type'])
 
 # Reducing to data used for ML
-data = alltrails[["trail_id", "city_encoded", "popularity", "length", "elevation_gain", "route_type_encoded"]]
+data = alltrails[["city_encoded", "popularity", "length", "elevation_gain", "route_type_encoded"]]
 
 # Checking for NAs
 cols_with_na = data.columns[data.isna().any()].tolist()
@@ -35,23 +36,74 @@ plt.scatter(embedding[:, 0], embedding[:, 1], c=labels, cmap='viridis', s=50)
 plt.title('UMAP + KMeans Clustering')
 plt.xlabel('UMAP-1')
 plt.ylabel('UMAP-2')
-plt.show()
+plt.savefig("clustering.png")
+plt.close()
 
 print(len(labels))
 print(len(data))
+print(len(chat))
 
-true_labels = np.array(alltrails["difficulty_rating"])
+alltrails_labels = np.array(alltrails["difficulty_rating"])
 pred_labels = np.array(labels)
+chatpred_labels = np.array(chat["estimated_strenuousness_score"])
 
-print(np.unique(true_labels))
-print(np.unique(pred_labels))
+print(f"Unique Values in Alltrails:", np.unique(alltrails_labels))
+print(f"Unique Values in Umap predictions:", np.unique(pred_labels))
+print(f"Unique Values in ChatGPT predictions:", np.unique(chatpred_labels))
 
-matrix = confusion_matrix(true_labels, pred_labels)
+unique, counts = np.unique(pred_labels, return_counts=True)
+
+# Create a bar plot
+plt.figure(figsize=(6, 4))
+sns.barplot(x=unique, y=counts, palette='pastel')
+plt.xlabel("Label")
+plt.ylabel("Count")
+plt.title("Distribution of Values in Data")
+plt.xticks(ticks=range(len(unique)), labels=[f"Class {u}" for u in unique])
+plt.tight_layout()
+plt.show()
+
+df_pred = pd.DataFrame({
+    "Trail": alltrails["name"],
+    "Length": alltrails["length"],
+    "elevation_gain": alltrails["elevation_gain"],
+    "alltrails_labels": alltrails_labels,
+    "Predicted_Class": pred_labels
+})
+
+sampled_df = df_pred.groupby('Predicted_Class').sample(n=4, random_state=42)
+
+sampled_df.to_csv("output.csv", index=False)
+
+
+
+
+alltrails_matrix = confusion_matrix(alltrails_labels, pred_labels)
+plt.figure(figsize=(8,6))
+sns.heatmap(alltrails_matrix, annot=True, fmt="d", cmap="Greens")
+plt.title("Alltrails Confusion Matrix")
+plt.xlabel("Umap Predicted Label")
+plt.ylabel("Alltrails Predicted Label")
+plt.tight_layout()
+plt.savefig("alltrails_confusion_matrix.png")
+plt.close()
+
+matrix = confusion_matrix(chatpred_labels, pred_labels)
 plt.figure(figsize=(8,6))
 sns.heatmap(matrix, annot=True, fmt="d", cmap="Greens")
-plt.title("Confusion Matrix")
-plt.xlabel("Predicted Label")
-plt.ylabel("True Label")
+plt.title("Chat Confusion Matrix")
+plt.xlabel("Umap Predicted Label")
+plt.ylabel("ChatGPT Predicted Label")
 plt.tight_layout()
-plt.savefig("confusion_matrix.png")
+plt.savefig("chat_confusion_matrix.png")
+plt.close()
+
+matrix = confusion_matrix(alltrails_labels, chatpred_labels)
+plt.figure(figsize=(8,6))
+sns.heatmap(matrix, annot=True, fmt="d", cmap="Greens")
+plt.title("Chat Confusion Matrix")
+plt.xlabel("Chat Predicted Label")
+plt.ylabel("Alltrails Predicted Label")
+plt.tight_layout()
+plt.savefig("chat_v_alltrails_confusion_matrix.png")
 plt.close()
