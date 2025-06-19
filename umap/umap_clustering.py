@@ -26,7 +26,7 @@ print(cols_with_na) # None
 reducer = umap.UMAP(n_neighbors=50, min_dist=0.1, n_components=2, random_state=42)
 embedding = reducer.fit_transform(data)
 
-n_clusters = 10
+n_clusters = 5
 kmeans = KMeans(n_clusters=n_clusters, random_state=42)
 labels = kmeans.fit_predict(embedding)
 
