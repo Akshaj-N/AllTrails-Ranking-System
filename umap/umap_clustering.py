@@ -8,13 +8,14 @@ import seaborn as sns
 
 # Loading Data
 alltrails = pd.read_csv('../alltrails-data.csv')
-chat = pd.read_csv('../ChatGPT_scores.csv')
+chat = pd.read_csv('../chatgpt_new_difficulty_ratings.csv')
 print(chat.columns.tolist())
 
 # Encoding columns
 alltrails['city_encoded'], uniques = pd.factorize(alltrails['city_name'])
 alltrails['route_type_encoded'], uniques = pd.factorize(alltrails['route_type'])
 
+print(alltrails["area_name"].unique())
 # Reducing to data used for ML
 data = alltrails[["city_encoded", "popularity", "length", "elevation_gain"]]
 
@@ -32,7 +33,7 @@ labels = kmeans.fit_predict(embedding)
 
 alltrails_labels = np.array(alltrails["difficulty_rating"])
 pred_labels = np.array(labels)
-chatpred_labels = np.array(chat["estimated_strenuousness_score"])
+chatpred_labels = np.array(chat["difficulty_rating"])
 
 unique, counts = np.unique(alltrails_labels, return_counts=True)
 
