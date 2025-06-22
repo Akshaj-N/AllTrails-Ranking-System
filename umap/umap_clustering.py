@@ -8,6 +8,21 @@ import seaborn as sns
 
 # Loading Data
 alltrails = pd.read_csv('../alltrails-data.csv')
+
+mapping_dif = {1:1, 3:2, 5:3, 7:4}
+alltrails["difficulty_rating"] = [mapping_dif[x] for x in alltrails["difficulty_rating"]]
+
+def convert_to_miles(row):
+    if row['units'] == 'i':
+        return row['length'] / 1760 # converting to yards
+    elif row['units'] == 'm':
+        return row['length'] / 1609.344 # converting to meters
+    else:
+        return None  # or row['length'] if you want to keep unconverted
+
+alltrails['length_miles'] = alltrails.apply(convert_to_miles, axis=1)
+
+
 chat = pd.read_csv('../chatgpt_new_difficulty_ratings.csv')
 print(chat.columns.tolist())
 
@@ -17,7 +32,7 @@ alltrails['route_type_encoded'], uniques = pd.factorize(alltrails['route_type'])
 
 print(alltrails["area_name"].unique())
 # Reducing to data used for ML
-data = alltrails[["city_encoded", "popularity", "length", "elevation_gain"]]
+data = alltrails[["city_encoded", "popularity", "length_miles", "elevation_gain"]]
 
 # Checking for NAs
 cols_with_na = data.columns[data.isna().any()].tolist()
@@ -27,13 +42,16 @@ print(cols_with_na) # None
 reducer = umap.UMAP(n_neighbors=50, min_dist=0.1, n_components=2, random_state=42)
 embedding = reducer.fit_transform(data)
 
-n_clusters = 5
+n_clusters = 4
 kmeans = KMeans(n_clusters=n_clusters, random_state=42)
 labels = kmeans.fit_predict(embedding)
 
 alltrails_labels = np.array(alltrails["difficulty_rating"])
 pred_labels = np.array(labels)
 chatpred_labels = np.array(chat["difficulty_rating"])
+
+mapping = {0: 1, 1: 4, 2: 2, 3: 3}
+transformed = [mapping[x] for x in pred_labels]
 
 unique, counts = np.unique(alltrails_labels, return_counts=True)
 
@@ -64,7 +82,7 @@ plt.show()
 for_plotting = pd.DataFrame({
     "x" : embedding[:, 0],
     "y" : embedding[:, 1],
-    "cluster" : pred_labels,
+    "cluster" : transformed,
     "Alltrails_Value": alltrails_labels,
     "ChatGPT_Value": chatpred_labels
 })
@@ -112,7 +130,7 @@ plt.show()
 
 # Visualization
 plt.figure(figsize=(8, 6))
-plt.scatter(embedding[:, 0], embedding[:, 1], c=labels, cmap='viridis', s=50)
+plt.scatter(embedding[:, 0], embedding[:, 1], c=pred_labels, cmap='viridis', s=50)
 plt.title('UMAP + KMeans Clustering')
 plt.xlabel('UMAP-1')
 plt.ylabel('UMAP-2')
@@ -140,16 +158,21 @@ plt.tight_layout()
 plt.show()
 
 df_pred = pd.DataFrame({
+    "TrailID": alltrails["trail_id"],
     "Trail": alltrails["name"],
-    "Length": alltrails["length"],
+    "Length": alltrails["length_miles"],
     "elevation_gain": alltrails["elevation_gain"],
     "alltrails_labels": alltrails_labels,
-    "Predicted_Class": pred_labels
+    "Cluster_Class": transformed,
+    "Chat Class": chatpred_labels
 })
 
-sampled_df = df_pred.groupby('Predicted_Class').sample(n=4, random_state=42)
+sample_hikes = [10245012, 10265905, 10266148, 10027395, 10006571,
+                10033258, 10006208, 10007701, 10289730, 10011593]
 
-sampled_df.to_csv("output.csv", index=False)
+sample = df_pred[df_pred["TrailID"].isin(sample_hikes)]
+
+sample.to_csv("output.csv", index=False)
 
 
 

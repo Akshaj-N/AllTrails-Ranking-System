@@ -1,21 +1,11 @@
-Trail,Length,elevation_gain,alltrails_labels,Predicted_Class
-Spruce Canyon Trail,4988.954,205.74,3,0
-Moose Ponds Trail,5149.888,45.72,1,0
-Garwood Trail,5310.822,61.8744,1,0
-Mink Lake,8046.7,516.9408,3,0
-Fawn Lake via Fawn Pass Trail,17380.872,340.7664,3,1
-Middle Teton Southwest Couloir,20921.42,1619.7072,7,1
-Mount Muller Trail,20921.42,1033.8816,5,1
-Appalachian Trail: Sloan Creek to Jenkins Gap,23496.364,1052.7792,5,1
-Pine Oak Nature Trail,1287.472,61.8744,1,2
-Elkmont Nature Trail,1287.472,28.956,1,2
-Jetty Trail,1448.406,0.0,1,2
-Inspiration Point Trail,2092.142,126.7968,3,2
-Cades Cove Loop Hike,16576.202,822.96,3,3
-Ore Terminal Trail,13679.39,391.9728,5,3
-Sargeant Mountain Ridge Loop,12070.05,540.7152,5,3
-Zumwalt Meadow Trail to Kanawyers Trail Loop,11104.446,140.8176,1,3
-West Fork Dosewallips River Trail,51498.88,2017.776,5,4
-Parker Pass to Lyell Canyon,57775.306,1784.9088,5,4
-South to North Kaibab Trail,31060.262,1966.8744,5,4
-South Fork Cascade Canyon to Hurricane Pass,29129.054,1073.8104,7,4
+TrailID,Trail,Length,elevation_gain,alltrails_labels,Cluster_Class,Chat Class
+10245012,"South Kaibab, Phantom Ranch, and Bright Angel Trail Loop ",15.270442045454544,1400.8608,3,4,4
+10265905,South Kaibab Trail to Ooh Aah Point,1.645915909090909,210.9216,2,2,1
+10266148,Grand Canyon Rim Trail,4.937747727272727,106.9848,1,1,2
+10006208,The Beehive Loop Trail,1.2801568181818181,148.7424,3,1,1
+10011593,Penobscot Mountain Trail,2.6517534090909094,296.8752,2,2,2
+10289730,The Bubbles and North Bubble,1.371596590909091,150.876,2,1,2
+10007701,Jordan Pond West Side Trail,3.0175125,14.9352,2,1,2
+10006571,Angels Landing Trail,3.7490306818181818,492.8616,3,2,2
+10027395,The Zion Narrows Riverside Walk,1.645915909090909,62.7888,1,1,1
+10033258,The Wonderland Trail,87.96506136363637,7723.9368,4,4,4
