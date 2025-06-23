@@ -7,91 +7,24 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
 # Loading Data
-alltrails = pd.read_csv('../data/alltrails-data-i.csv')
-chat = pd.read_csv('../data/chatgpt_ratings.csv')
-chat["GPT_rating"] = chat["difficulty_rating"]
-chat = chat[["trail_id", "GPT_rating"]]
-
-# Converting 1,3,5,7 to 1,2,3,4 rating system
-mapping_dif = {1:1, 3:2, 5:3, 7:4}
-alltrails["difficulty_rating"] = [mapping_dif[x] for x in alltrails["difficulty_rating"]]
-
-# Merged Dataset
-full = alltrails.merge(chat, on='trail_id', how='inner')
-
-
-
-# Encoding columns
-full['city_encoded'], uniques = pd.factorize(full['city_name'])
-full['route_type_encoded'], uniques = pd.factorize(full['route_type'])
-
-
-# Reducing to data used for ML
-data = full[["city_encoded", "popularity", "length", "elevation_gain"]]
-
-# Trying their data
 full = pd.read_csv('../data/full_dataset.csv')
-data = full.drop(columns = ["trail_id", "name", "gpt_rating"])
+data = full.drop(columns = ["trail_id", "name", "difficulty_rating", "gpt_rating"])
 
-
-
-# Doing UMAP
+# UMAP
 reducer = umap.UMAP(n_neighbors=300, min_dist=0.1, n_components=2, random_state=42)
 embedding = reducer.fit_transform(data)
 
-n_clusters = 4
+# Then clustering using kmeans
+n_clusters = 4 # 4 clusters to match other rating systems
 kmeans = KMeans(n_clusters=n_clusters, random_state=42)
 umap_labels = kmeans.fit_predict(embedding)
 
-gpt_predictions = np.array(full["gpt_rating"])
-
-# Merging labels for plotting
-for_plotting = pd.DataFrame({
-    "x" : embedding[:, 0],
-    "y" : embedding[:, 1],
-    "UMAP_Value" : umap_labels,
-    "Chat": gpt_predictions
-})
-
-# Plotting AllTrails over UMAP
-sns.scatterplot(
-    data=for_plotting,
-    x='x', y='y',
-    hue='Chat',         # colors by this variable (continuous)
-    # style='cluster',           # shapes by this categorical variable
-    palette='viridis',
-    s=50
-)
-plt.xlabel("UMAP-1")
-plt.ylabel("UMAP-2")
-plt.title("AllTrails Values in UMAP Clustering")
-plt.show()
-
-# Plotting AllTrails over UMAP
-sns.scatterplot(
-    data=for_plotting,
-    x='x', y='y',
-    hue='UMAP_Value',         # colors by this variable (continuous)
-    # style='cluster',           # shapes by this categorical variable
-    palette='viridis',
-    s=50
-)
-plt.xlabel("UMAP-1")
-plt.ylabel("UMAP-2")
-plt.title("AllTrails Values in UMAP Clustering")
-plt.show()
-
-
-
-
-
-
 alltrails_predictions = np.array(full["difficulty_rating"])
 umap_predictions = np.array(umap_labels)
-gpt_predictions = np.array(full["GPT_rating"])
+gpt_predictions = np.array(full["gpt_rating"])
 
 # Changing cluster labels to match ranking system
-mapping = {0: 2, 1: 4, 2: 1, 3: 3}
+mapping = {0: 2, 1: 4, 2: 3, 3: 1}
 transformed_umap = [mapping[x] for x in umap_predictions]
 
 
@@ -116,7 +49,8 @@ sns.scatterplot(
 plt.xlabel("UMAP-1")
 plt.ylabel("UMAP-2")
 plt.title("AllTrails Values in UMAP Clustering")
-plt.show()
+plt.savefig("Alltrails_in_UMAP.png")
+plt.close()
 
 # Plotting GPT values over UMAP
 sns.scatterplot(
@@ -130,7 +64,8 @@ sns.scatterplot(
 plt.xlabel("UMAP-1")
 plt.ylabel("UMAP-2")
 plt.title("GPT Values in UMAP Clustering")
-plt.show()
+plt.savefig("GPT_Values_in_UMAP.png")
+plt.close()
 
 
 # Plotting UMAP Clusters with Labeled Clusters
@@ -145,7 +80,8 @@ sns.scatterplot(
 plt.xlabel("UMAP-1")
 plt.ylabel("UMAP-2")
 plt.title("UMAP Clustering")
-plt.show()
+plt.savefig("UMAP_clustering.png")
+plt.close()
 
 
 df_pred = pd.DataFrame({
@@ -198,7 +134,8 @@ for i, model in enumerate(means.index):
 plt.title("Model Accuracy per Survey Results")
 plt.ylim(0.5, 4.5)
 plt.grid(True, axis='y', linestyle='--', alpha=0.3)
-plt.show()
+plt.savefig("Model_Accuracy_Survey.png")
+plt.close()
 
 
 
