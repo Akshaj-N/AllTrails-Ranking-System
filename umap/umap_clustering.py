@@ -2,6 +2,7 @@ import pandas as pd
 import umap
 import numpy as np
 from sklearn.cluster import KMeans
+from sklearn.metrics import classification_report, accuracy_score
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
@@ -100,6 +101,11 @@ print(f"Accuracy of UMAP matching GPT: {accuracy_gpt:.2%}")
 
 accuracy_AT = (df_pred["UMAP Prediction"] == df_pred["AllTrails Prediction"]).mean()
 print(f"Accuracy of UMAP matching AllTrails: {accuracy_AT:.2%}")
+
+
+# Classification report (includes precision, recall, f1-score)
+report = classification_report(df_pred["GPT Prediction"], df_pred["UMAP Prediction"], digits=2)
+print(report)
 
 
 # ---------- SURVEY DATA ----------------
