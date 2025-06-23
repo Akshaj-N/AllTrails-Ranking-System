@@ -74,14 +74,14 @@ df = add_engineered_features(df)
 df = pd.get_dummies(df, columns=['route_type'], drop_first=True)
 
 # Drop unnecessary columns
-drop_cols = ['area_name', 'city_name', 'state_name', 'country_name', '_geoloc', 'visitor_usage', 'difficulty_rating', 'units', 'avg_rating']
+drop_cols = ['area_name', 'city_name', 'state_name', 'country_name', '_geoloc', 'visitor_usage', 'units', 'avg_rating']
 df = df.drop(columns=[col for col in drop_cols if col in df.columns])
 df.to_csv(os.path.join(output_dir, 'full_dataset.csv'), index=False)
 
 # drop these columns after saving the full_dataset and removing survey hikes
 df = df[~df['trail_id'].isin(survey_ids)].copy()
-drop_cols_2 = ['trail_id', 'name']
-df = df.drop(columns=[col for col in drop_cols if col in df.columns])
+drop_cols_2 = ['trail_id', 'name', 'difficulty_rating']
+df = df.drop(columns=[col for col in drop_cols_2 if col in df.columns])
 # -----------------------------------
 # Step 2: Train-test split
 # -----------------------------------
