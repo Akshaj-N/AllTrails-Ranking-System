@@ -207,3 +207,26 @@ plt.ylabel("Alltrails Predicted Label")
 plt.tight_layout()
 plt.savefig("chat_v_alltrails_confusion_matrix.png")
 plt.close()
+
+survey = {"AllTrails": [1, 4, 1, 1, 3, 2, 3, 3, 1, 3],
+          "FFN": [3, 3, 3, 1, 2, 2, 2, 4, 1, 4],
+          "Gradient Boosting": [3, 2, 3, 3, 2, 2, 2, 3, 1, 3],
+          "UMAP": [3, 2, 3, 2, 2, 2, 2, 2, 1, 2]}
+
+survey_df = pd.DataFrame(survey)
+survey_long = survey_df.melt(var_name="Model", value_name="Accuracy (1-5)")
+
+# Create jittered scatterplot
+plt.figure(figsize=(8, 5))
+sns.barplot(data=survey_long, x="Model", y="Accuracy (1-5)", ci="sd", palette="pastel")
+sns.stripplot(data=survey_long, x="Model", y="Accuracy (1-5)", jitter=True, size=8, alpha=0.8)
+
+# Optional: improve formatting
+plt.title("Model Accuracy per Survey Results")
+plt.ylim(0.5, 4.5)
+plt.grid(True, axis='y', linestyle='--', alpha=0.3)
+plt.show()
+
+
+
+
