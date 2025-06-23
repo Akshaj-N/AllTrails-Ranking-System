@@ -5,7 +5,8 @@ import ast
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-data_dir = "../data"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.join(SCRIPT_DIR, '..', 'data')
 alltrails_path = os.path.join(data_dir, "alltrails-data-i.csv")
 gpt_path = os.path.join(data_dir, "chatgpt_ratings.csv")
 survey_path = os.path.join(data_dir, "survey_hikes.csv")
@@ -62,7 +63,7 @@ df = df.merge(gpt_df, on='trail_id', how='inner')
 # Separate survey hikes
 survey_ids = pd.read_csv(survey_path)['trail_id'].tolist()
 survey_df = df[df['trail_id'].isin(survey_ids)].copy()
-df = df[~df['trail_id'].isin(survey_ids)].copy()
+# df = df[~df['trail_id'].isin(survey_ids)].copy()
 
 # Extract sets for one-hot
 features_set, activities_set = extract_unique_features_activities(df)
@@ -73,9 +74,14 @@ df = add_engineered_features(df)
 df = pd.get_dummies(df, columns=['route_type'], drop_first=True)
 
 # Drop unnecessary columns
-drop_cols = ['trail_id', 'name', 'area_name', 'city_name', 'state_name', 'country_name', '_geoloc', 'visitor_usage', 'difficulty_rating', 'units', 'avg_rating']
+drop_cols = ['area_name', 'city_name', 'state_name', 'country_name', '_geoloc', 'visitor_usage', 'difficulty_rating', 'units', 'avg_rating']
 df = df.drop(columns=[col for col in drop_cols if col in df.columns])
+df.to_csv(os.path.join(output_dir, 'full_dataset.csv'), index=False)
 
+# drop these columns after saving the full_dataset and removing survey hikes
+df = df[~df['trail_id'].isin(survey_ids)].copy()
+drop_cols_2 = ['trail_id', 'name']
+df = df.drop(columns=[col for col in drop_cols if col in df.columns])
 # -----------------------------------
 # Step 2: Train-test split
 # -----------------------------------
@@ -102,7 +108,7 @@ for col in X.columns:
 survey_df = survey_df[X.columns]
 
 # Save full dataset with survey
-full_data = pd.concat([df_train, df_test, survey_df], axis=0)
+# full_data = pd.concat([df_train, df_test, survey_df], axis=0)
 
 # -----------------------------------
 # Save all
@@ -110,6 +116,6 @@ full_data = pd.concat([df_train, df_test, survey_df], axis=0)
 df_train.to_csv(os.path.join(output_dir, 'train.csv'), index=False)
 df_test.to_csv(os.path.join(output_dir, 'test.csv'), index=False)
 survey_df.to_csv(os.path.join(output_dir, 'survey_input.csv'), index=False)
-full_data.to_csv(os.path.join(output_dir, 'full_dataset.csv'), index=False)
+# full_data.to_csv(os.path.join(output_dir, 'full_dataset.csv'), index=False)
 
 print("Preprocessing complete. CSVs saved to 'data/' folder.")
