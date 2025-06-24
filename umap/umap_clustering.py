@@ -15,7 +15,7 @@ data = full.drop(columns = ["trail_id", "name", "difficulty_rating", "gpt_rating
 reducer = umap.UMAP(n_neighbors=300, min_dist=0.1, n_components=2, random_state=42)
 embedding = reducer.fit_transform(data)
 
-#  Kmeans for clustering from scratch
+#  Kmeans for clustering
 def kmeans(X, k, max_iters=100, tol=1e-4, random_state=42):
     np.random.seed(random_state)
 
@@ -40,10 +40,10 @@ def kmeans(X, k, max_iters=100, tol=1e-4, random_state=42):
 
     return labels
 
-# Then clustering
 n_clusters = 4 # 4 clusters to match other rating systems
 umap_labels = kmeans(embedding, k=n_clusters)
 
+# Summarizing all rating systems
 alltrails_predictions = np.array(full["difficulty_rating"])
 umap_predictions = np.array(umap_labels)
 gpt_predictions = np.array(full["gpt_rating"])
@@ -51,7 +51,6 @@ gpt_predictions = np.array(full["gpt_rating"])
 # Changing cluster labels to match ranking system as numbers were randomly placed
 mapping = {0: 2, 1: 3, 2: 1, 3: 4}
 transformed_umap = [mapping[x] for x in umap_predictions]
-
 
 # Merging labels for plotting
 for_plotting = pd.DataFrame({
@@ -66,8 +65,7 @@ for_plotting = pd.DataFrame({
 sns.scatterplot(
     data=for_plotting,
     x='x', y='y',
-    hue='Alltrails_Value',         # colors by this variable (continuous)
-    # style='cluster',           # shapes by this categorical variable
+    hue='Alltrails_Value',
     palette='viridis',
     s=50
 )
@@ -81,8 +79,7 @@ plt.close()
 sns.scatterplot(
     data=for_plotting,
     x='x', y='y',
-    hue='GPT_Value',         # colors by this variable (continuous)
-    # style='cluster',           # shapes by this categorical variable
+    hue='GPT_Value',
     palette='viridis',
     s=50
 )
@@ -97,8 +94,7 @@ plt.close()
 sns.scatterplot(
     data=for_plotting,
     x='x', y='y',
-    hue='UMAP_Value',         # colors by this variable (continuous)
-    # style='cluster',           # shapes by this categorical variable
+    hue='UMAP_Value',
     palette='viridis',
     s=50
 )
@@ -154,7 +150,7 @@ means = survey_long.groupby("Model")["Accuracy (1-5)"].mean()
 # Create Scatterplot of Survey Results
 plt.figure(figsize=(8, 5))
 
-sns.barplot(data=survey_long, x="Model", y="Accuracy (1-5)", ci="sd", palette="pastel")
+sns.barplot(data=survey_long, x="Model", y="Accuracy (1-5)", errorbar='sd', palette="pastel")
 sns.stripplot(data=survey_long, x="Model", y="Accuracy (1-5)", jitter=True, size=8, alpha=0.8)
 
 for i, model in enumerate(means.index):
