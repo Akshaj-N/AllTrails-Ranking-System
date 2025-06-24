@@ -11,21 +11,45 @@ import seaborn as sns
 full = pd.read_csv('../data/full_dataset.csv')
 data = full.drop(columns = ["trail_id", "name", "difficulty_rating", "gpt_rating"])
 
-# UMAP
+# UMAP for reducing dimensionality
 reducer = umap.UMAP(n_neighbors=300, min_dist=0.1, n_components=2, random_state=42)
 embedding = reducer.fit_transform(data)
 
-# Then clustering using kmeans
+#  Kmeans for clustering from scratch
+def kmeans(X, k, max_iters=100, tol=1e-4, random_state=42):
+    np.random.seed(random_state)
+
+    # Step 1: Initialize centroids randomly from data points
+    n_samples, n_features = X.shape
+    initial_indices = np.random.choice(n_samples, k, replace=False)
+    centroids = X[initial_indices]
+
+    for iteration in range(max_iters):
+        # Step 2: Assign each point to the closest centroid
+        distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
+        labels = np.argmin(distances, axis=1)
+
+        # Step 3: Compute new centroids as the mean of assigned points
+        new_centroids = np.array([X[labels == i].mean(axis=0) for i in range(k)])
+
+        # Step 4: Check convergence
+        if np.all(np.linalg.norm(new_centroids - centroids, axis=1) < tol):
+            break
+
+        centroids = new_centroids
+
+    return labels
+
+# Then clustering
 n_clusters = 4 # 4 clusters to match other rating systems
-kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-umap_labels = kmeans.fit_predict(embedding)
+umap_labels = kmeans(embedding, k=n_clusters)
 
 alltrails_predictions = np.array(full["difficulty_rating"])
 umap_predictions = np.array(umap_labels)
 gpt_predictions = np.array(full["gpt_rating"])
 
-# Changing cluster labels to match ranking system
-mapping = {0: 2, 1: 4, 2: 3, 3: 1}
+# Changing cluster labels to match ranking system as numbers were randomly placed
+mapping = {0: 2, 1: 3, 2: 1, 3: 4}
 transformed_umap = [mapping[x] for x in umap_predictions]
 
 
