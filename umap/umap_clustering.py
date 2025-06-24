@@ -156,7 +156,6 @@ sns.stripplot(data=survey_long, x="Model", y="Accuracy (1-5)", jitter=True, size
 for i, model in enumerate(means.index):
     plt.text(i + 0.1, means[model] + 0.1, f"{means[model]:.2f}", ha='left', va='center', fontsize=10, fontweight='bold')
 
-
 plt.title("Model Accuracy per Survey Results")
 plt.ylim(0.5, 4.5)
 plt.grid(True, axis='y', linestyle='--', alpha=0.3)
