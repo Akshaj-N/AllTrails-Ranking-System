@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 survey = {"AllTrails": [1, 4, 1, 1, 3, 2, 3, 3, 1, 3],
-          "FFN": [3, 3, 3, 1, 2, 2, 2, 4, 1, 4],
+          "FNN": [3, 3, 3, 1, 2, 2, 2, 4, 1, 4],
           "GBDT": [3, 2, 3, 3, 2, 2, 2, 3, 3, 3],
           "UMAP": [3, 2, 3, 2, 2, 2, 2, 2, 1, 2]}
 
