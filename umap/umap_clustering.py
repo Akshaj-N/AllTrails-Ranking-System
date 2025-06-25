@@ -1,10 +1,8 @@
 import pandas as pd
 import umap
 import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
 # Loading Data
@@ -15,24 +13,23 @@ data = full.drop(columns = ["trail_id", "name", "difficulty_rating", "gpt_rating
 reducer = umap.UMAP(n_neighbors=300, min_dist=0.1, n_components=2, random_state=42)
 embedding = reducer.fit_transform(data)
 
-#  Kmeans for clustering
+#  Kmeans for clustering, ChatGPT helped with debugging
 def kmeans(X, k, max_iters=100, tol=1e-4, random_state=42):
     np.random.seed(random_state)
 
-    # Step 1: Initialize centroids randomly from data points
+    # Initialize centroids
     n_samples, n_features = X.shape
     initial_indices = np.random.choice(n_samples, k, replace=False)
     centroids = X[initial_indices]
 
     for iteration in range(max_iters):
-        # Step 2: Assign each point to the closest centroid
+        # Assign each point to centroid
         distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
         labels = np.argmin(distances, axis=1)
 
-        # Step 3: Compute new centroids as the mean of assigned points
+        # Make new centroids
         new_centroids = np.array([X[labels == i].mean(axis=0) for i in range(k)])
 
-        # Step 4: Check convergence
         if np.all(np.linalg.norm(new_centroids - centroids, axis=1) < tol):
             break
 
@@ -51,6 +48,8 @@ gpt_predictions = np.array(full["gpt_rating"])
 # Changing cluster labels to match ranking system as numbers were randomly placed
 mapping = {0: 2, 1: 3, 2: 1, 3: 4}
 transformed_umap = [mapping[x] for x in umap_predictions]
+
+# ---------- Plotting ---------------------------------
 
 # Merging labels for plotting
 for_plotting = pd.DataFrame({
@@ -122,7 +121,6 @@ print(f"Accuracy of UMAP matching GPT: {accuracy_gpt:.2%}")
 accuracy_AT = (df_pred["UMAP Prediction"] == df_pred["AllTrails Prediction"]).mean()
 print(f"Accuracy of UMAP matching AllTrails: {accuracy_AT:.2%}")
 
-
 # Classification report (includes precision, recall, f1-score)
 report = classification_report(df_pred["GPT Prediction"], df_pred["UMAP Prediction"], digits=2)
 print(report)
@@ -136,32 +134,3 @@ sample_hikes = [10245012, 10265905, 10266148, 10027395, 10006571,
 sample = df_pred[df_pred["TrailID"].isin(sample_hikes)]
 
 sample.to_csv("sample_output.csv", index=False)
-
-survey = {"AllTrails": [1, 4, 1, 1, 3, 2, 3, 3, 1, 3],
-          "FFN": [3, 3, 3, 1, 2, 2, 2, 4, 1, 4],
-          "GBDT": [3, 2, 3, 3, 2, 2, 2, 3, 3, 3],
-          "UMAP": [3, 2, 3, 2, 2, 2, 2, 2, 1, 2]}
-
-survey_df = pd.DataFrame(survey)
-survey_long = survey_df.melt(var_name="Model", value_name="Accuracy (1-5)")
-
-means = survey_long.groupby("Model")["Accuracy (1-5)"].mean()
-
-# Create Scatterplot of Survey Results
-plt.figure(figsize=(8, 5))
-
-sns.barplot(data=survey_long, x="Model", y="Accuracy (1-5)", errorbar='sd', palette="pastel")
-sns.stripplot(data=survey_long, x="Model", y="Accuracy (1-5)", jitter=True, size=8, alpha=0.8)
-
-for i, model in enumerate(means.index):
-    plt.text(i + 0.1, means[model] + 0.1, f"{means[model]:.2f}", ha='left', va='center', fontsize=10, fontweight='bold')
-
-plt.title("Model Accuracy per Survey Results")
-plt.ylim(0.5, 4.5)
-plt.grid(True, axis='y', linestyle='--', alpha=0.3)
-plt.savefig("Model_Accuracy_Survey.png")
-plt.close()
-
-
-
-
