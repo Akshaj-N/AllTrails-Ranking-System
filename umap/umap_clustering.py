@@ -103,6 +103,8 @@ plt.title("UMAP Clustering")
 plt.savefig("UMAP_clustering.png")
 plt.close()
 
+# -------------------- Evaluating Model --------------------------------------
+
 
 df_pred = pd.DataFrame({
     "TrailID": full["trail_id"],
