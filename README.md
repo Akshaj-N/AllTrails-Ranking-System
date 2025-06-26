@@ -75,14 +75,6 @@ Follow these steps to set up and run the project locally.
 
    python scripts/predict_survey.py
 
-## Results
-
-| Model      | Test Accuracy |
-| ---------- | ------------- |
-| FNN        | 88.3%         |
-| GBDT       | 91.6%         |
-| Clustering | 74.79%        |
-
 ## Contributors
 
 Hannah Wilcox  
