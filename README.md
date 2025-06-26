@@ -73,7 +73,7 @@ Follow these steps to set up and run the project locally.
    
    **_c. Train the Unsupervised Machine Learning:_**
 
-   python fnn/fnn_classifier.py
+   python umap/umap_clustering.py
 
 7. **Run predictions on survey trails:**
 
