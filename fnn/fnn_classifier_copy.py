@@ -103,15 +103,6 @@ def add_binary_feature_activity_columns(df, features_set, activities_set):
     return df
 
 def add_engineered_features(df):
-    """
-    Adds additional engineered features to the DataFrame.
-
-    Parameters:
-        df (pd.DataFrame): The input DataFrame (should already have elevation_gain and length)
-
-    Returns:
-        pd.DataFrame: Updated DataFrame with new features
-    """
     # Basic derived feature
     df['steepness'] = df['elevation_gain'] / (df['length'] + 1e-5)
 
@@ -239,76 +230,32 @@ def predict_on_survey(model, survey_df, features_set, activities_set, scaler, de
     predicted_rating_map = {0: 1, 1: 2, 2: 3, 3: 4}
 
     # Map classes back to ratings [1,3,5,7]
-    # gpt_rating_map = {1: 1, 2: 3, 3: 5, 4: 7}
     difficulty_rating_map = {1: 1, 3: 2, 5: 3, 7: 4}
 
     survey_df['predicted_rating'] = preds.cpu().numpy()
-    survey_df['predicted_rating_mapped'] = survey_df['predicted_rating'].map(predicted_rating_map)
-    # survey_df['gpt_rating_mapped'] = survey_df['gpt_rating'].map(gpt_rating_map)
+    survey_df['predicted_rating'] = survey_df['predicted_rating'].map(predicted_rating_map)
     survey_df['difficulty_rating'] = survey_df['difficulty_rating'].map(difficulty_rating_map)
 
     # Match between difficulty_rating and predicted_rating_mapped (both on [1,3,5,7])
-    survey_df['Match'] = survey_df['difficulty_rating'] == survey_df['predicted_rating_mapped']
+    survey_df['Match'] = survey_df['difficulty_rating'] == survey_df['predicted_rating']
 
-    # Select and print columns
-    print(survey_df[['trail_id', 'name', 'difficulty_rating', 'gpt_rating', 'predicted_rating_mapped', 'Match']])
+    survey_results_filename = './fnn/fnn_survey_predictions.csv'
+    
+    # Select and save columns
+    survey_df[['trail_id', 'name', 'difficulty_rating', 'gpt_rating', 'predicted_rating', 'Match']].to_csv(survey_results_filename, index=False)
+    print(f"Survey results are saved to file: {survey_results_filename}")
 
     return survey_df
 
-# Visuals
-def save_class_distribution_plot(df, target_col='gpt_rating', filename='gpt_rating_distribution.png'):
-    """
-    Saves a bar plot of class distribution to a file and prints summary stats.
-    
-    Parameters:
-        df (pd.DataFrame): The dataset containing the target column.
-        target_col (str): The column name representing the class labels.
-        filename (str): File name to save the plot.
-    """
-    class_counts = df[target_col].value_counts().sort_index()
-    total_samples = len(df)
-
-    print("📊 Total Samples:", total_samples)
-    print("📋 Class-wise Distribution:")
-    for cls, count in class_counts.items():
-        print(f"  Class {cls}: {count} samples")
-
-    # Plot
-    plt.figure(figsize=(8, 5))
-    sns.barplot(x=class_counts.index, y=class_counts.values, palette='Blues_d')
-    plt.title("Distribution of GPT Ratings")
-    plt.xlabel("gpt_rating (Difficulty Level)")
-    plt.ylabel("Count")
-    plt.xticks([0, 1, 2, 3], ['1 (Easy)', '2 (Moderate)', '3 (Hard)', '4 (Very Hard)'])
-    plt.grid(axis='y', linestyle='--', alpha=0.6)
-    plt.tight_layout()
-    plt.savefig(filename, dpi=300)
-    plt.close()
-    print(f"\n Plot saved to '{filename}'")
-
-# import matplotlib.pyplot as plt
-# import numpy as np
 
 def plot_rating_distributions(
     gpt_counts, gpt_labels,
     alltrails_counts, alltrails_labels,
     save_path='rating_distribution_comparison.png'
 ):
-    """
-    Generates and saves a side-by-side bar chart comparing GPT and AllTrails rating distributions,
-    styled with AllTrails-themed colors (green/gray).
-
-    Parameters:
-        gpt_counts (list of int): Class counts for GPT-generated ratings.
-        gpt_labels (list of str): Corresponding class labels for GPT.
-        alltrails_counts (list of int): Class counts for AllTrails ratings.
-        alltrails_labels (list of str): Corresponding class labels for AllTrails.
-        save_path (str): File path to save the image.
-    """
-    # Theme colors
-    gpt_color = '#A3C4A8'       # muted green for GPT
-    alltrails_color = '#345C4F' # dark forest green for AllTrails
-    bg_color = 'white'       # dark grey background
+    gpt_color = '#A3C4A8'       
+    alltrails_color = '#345C4F' 
+    bg_color = 'white'       
     text_color = '#2E2E2E' 
 
     x = np.arange(len(gpt_labels))
@@ -332,7 +279,7 @@ def plot_rating_distributions(
         height = bar.get_height()
         ax.annotate(f'{height}',
                     xy=(bar.get_x() + bar.get_width() / 2, height),
-                    xytext=(0, 4),  # Offset above bar
+                    xytext=(0, 4), 
                     textcoords="offset points",
                     ha='center', va='bottom',
                     fontsize=8, color=text_color)
@@ -342,16 +289,7 @@ def plot_rating_distributions(
     plt.close()
     print(f"Saved AllTrails-themed plot to {save_path}")
 
-def plot_confusion_matrix(y_true, y_pred, class_names, save_path='fnn_confusion_matrix.png'):
-    """
-    Plots and saves the confusion matrix with AllTrails-inspired styling.
-
-    Parameters:
-        y_true (array-like): True class labels
-        y_pred (array-like): Predicted class labels
-        class_names (list): Class label names (e.g., ['Easy', 'Moderate', 'Hard', 'Very Hard'])
-        save_path (str): File name to save the plot
-    """
+def plot_confusion_matrix(y_true, y_pred, class_names, save_path='./fnn/fnn_confusion_matrix.png'):
     cm = confusion_matrix(y_true, y_pred)
 
     cmap = sns.light_palette("#345C4F", as_cmap=True)
@@ -380,7 +318,7 @@ if __name__ == "__main__":
 
     alltrails_path = 'data/alltrails-data-i.csv'
     gpt_path = 'data/chatgpt_ratings.csv'
-    survey_path = 'data/Survey_hikes.csv'
+    survey_path = 'data/survey_full.csv'
     df = load_data(alltrails_path, gpt_path)
     df, survey_df = separate_survey_hikes(df, survey_path)
 
@@ -388,8 +326,6 @@ if __name__ == "__main__":
     # check_missing(df)
     # sample_rows(df)
     target_distribution(df)
-    # save_class_distribution_plot(df, target_col='gpt_rating', filename='gpt_rating_distribution.png')
-    # save_class_distribution_plot(df, target_col='difficulty_rating', filename='alltrails_rating_distribution.png')
 
     gpt_counts = [359, 853, 851, 1191]
     gpt_labels = ['1', '2', '3', '4']
@@ -397,7 +333,7 @@ if __name__ == "__main__":
     alltrails_counts = [869, 1433, 771, 181]
     alltrails_labels = ['1', '3', '5', '7']  
 
-    # plot_rating_distributions(gpt_counts, gpt_labels, alltrails_counts, alltrails_labels)
+    plot_rating_distributions(gpt_counts, gpt_labels, alltrails_counts, alltrails_labels)
 
     drop_cols = [
     'trail_id', 'name', 'area_name', 'city_name', 'state_name', 'country_name',
@@ -433,7 +369,7 @@ if __name__ == "__main__":
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
 
-    # # Optional: Print to verify shapes
+    # Print to verify shapes
     # print(f"\nTraining samples: {X_train.shape[0]}")
     # print(f"Test samples: {X_test.shape[0]}")
 
@@ -457,7 +393,7 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss(weight=class_weights_tensor)
 
     # Optimizer
-    optimizer = optim.AdamW(model.parameters(), lr=0.0001, weight_decay=1e-4)
+    optimizer = optim.AdamW(model.parameters(), lr=0.0005, weight_decay=1e-4)
 
     train_model(model, train_loader, criterion, optimizer, epochs=300)
     evaluate_model(model, X_test_tensor, y_test_tensor)
