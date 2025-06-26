@@ -8,7 +8,7 @@ from scipy.special import softmax
 import joblib
 
 # loading the dataset
-data = pd.read_csv('../data/alltrails-data.csv')
+data = pd.read_csv('../data/alltrails-data-i.csv')
 chatgpt_ratings = pd.read_csv('../data/chatgpt_ratings.csv')
 
 data = data.merge(chatgpt_ratings[['trail_id', 'difficulty_rating']], on='trail_id', suffixes=('', '_label'))
