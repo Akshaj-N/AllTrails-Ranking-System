@@ -49,3 +49,5 @@ output_df = survey_trails[['trail_id', 'name', 'Actual Difficulty', 'Predicted D
 print(output_df.to_string(index = False))
 
 output_df.to_csv('survey_trail_predictions.csv', index = False)
+
+# I have used ChatGPT and Google for debugging
