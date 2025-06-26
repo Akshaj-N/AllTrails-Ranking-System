@@ -13,6 +13,7 @@ import random
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 # load data
 def load_data(alltrails_path, gpt_path):
     """
@@ -235,20 +236,22 @@ def predict_on_survey(model, survey_df, features_set, activities_set, scaler, de
         _, preds = torch.max(outputs, 1)  # get predicted class indices (0..3)
 
     # Map classes back to ratings [1,3,5,7]
-    predicted_rating_map = {0: 1, 1: 3, 2: 5, 3: 7}
+    predicted_rating_map = {0: 1, 1: 2, 2: 3, 3: 4}
 
     # Map classes back to ratings [1,3,5,7]
-    gpt_rating_map = {1: 1, 2: 3, 3: 5, 4: 7}
+    # gpt_rating_map = {1: 1, 2: 3, 3: 5, 4: 7}
+    difficulty_rating_map = {1: 1, 3: 2, 5: 3, 7: 4}
 
     survey_df['predicted_rating'] = preds.cpu().numpy()
     survey_df['predicted_rating_mapped'] = survey_df['predicted_rating'].map(predicted_rating_map)
-    survey_df['gpt_rating_mapped'] = survey_df['gpt_rating'].map(gpt_rating_map)
+    # survey_df['gpt_rating_mapped'] = survey_df['gpt_rating'].map(gpt_rating_map)
+    survey_df['difficulty_rating'] = survey_df['difficulty_rating'].map(difficulty_rating_map)
 
     # Match between difficulty_rating and predicted_rating_mapped (both on [1,3,5,7])
     survey_df['Match'] = survey_df['difficulty_rating'] == survey_df['predicted_rating_mapped']
 
     # Select and print columns
-    print(survey_df[['trail_id', 'name', 'difficulty_rating', 'gpt_rating_mapped', 'predicted_rating_mapped', 'Match']])
+    print(survey_df[['trail_id', 'name', 'difficulty_rating', 'gpt_rating', 'predicted_rating_mapped', 'Match']])
 
     return survey_df
 
@@ -370,18 +373,14 @@ def plot_confusion_matrix(y_true, y_pred, class_names, save_path='fnn_confusion_
 
 
 
-
-
-
-
 if __name__ == "__main__":
     torch.manual_seed(42)
     np.random.seed(42)
     random.seed(42)
 
-    alltrails_path = '../alltrails-data-i.csv'
-    gpt_path = '../chatgpt_new_difficulty_ratings.csv'
-    survey_path = '../Survey_hikes.csv'
+    alltrails_path = 'data/alltrails-data-i.csv'
+    gpt_path = 'data/chatgpt_ratings.csv'
+    survey_path = 'data/Survey_hikes.csv'
     df = load_data(alltrails_path, gpt_path)
     df, survey_df = separate_survey_hikes(df, survey_path)
 
