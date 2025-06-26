@@ -4,8 +4,8 @@ trail_id,name,difficulty_rating,gpt_rating,predicted_rating,Match
 10266148,Grand Canyon Rim Trail,1,2,2,False
 10006208,The Beehive Loop Trail,3,1,2,False
 10011593,Penobscot Mountain Trail,2,2,2,True
-10289730,The Bubbles and North Bubble,2,2,1,False
-10007701,Jordan Pond West Side Trail,2,2,1,False
+10289730,The Bubbles and North Bubble,2,2,2,True
+10007701,Jordan Pond West Side Trail,2,2,2,True
 10006571,Angels Landing Trail,3,2,2,False
 10027395,The Zion Narrows Riverside Walk,1,1,2,False
 10033258,The Wonderland Trail,4,4,4,True
