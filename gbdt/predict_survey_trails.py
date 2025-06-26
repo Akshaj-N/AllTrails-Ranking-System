@@ -13,8 +13,8 @@ learning_rate = 0.05
 features = ['popularity', 'length', 'elevation_gain', 'route_type', 'visitor_usage', 'num_reviews']
 
 # loading the data
-data = pd.read_csv('alltrails-data.csv')
-chatgpt_ratings = pd.read_csv('ChatGPT_scores.csv')
+data = pd.read_csv('../data/alltrails-data-i.csv')
+chatgpt_ratings = pd.read_csv('../data/chatgpt_ratings.csv')
 data = data.merge(chatgpt_ratings[['trail_id', 'difficulty_rating']], on='trail_id', suffixes=('', '_label'))
 data = data.dropna(subset=['difficulty_rating'])
 
