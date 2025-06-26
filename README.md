@@ -10,7 +10,7 @@ AllTrails' difficulty ratings are often vague or inconsistent, underestimating t
 
 - [AllTrails Dataset](https://github.com/j-ane/trail-data/blob/master/alltrails-data.csv) – Metadata on 3000+ hiking trails.
 - ChatGPT Ratings – Generated difficulty labels using AI based on user reviews/comments from the web.
-- Survey Ratings – Collected from ~10 volunteers familiar with specific trails.
+- Survey Ratings – Collected from 10 AllTrails users familiar with specific trails.
 
 ## Modeling Approaches
 
