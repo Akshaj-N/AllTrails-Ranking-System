@@ -77,6 +77,7 @@ y_pred = np.argmax(F_test, axis=1)
 print("Classification Report:")
 print(classification_report(y_test, y_pred))
 
+# Confusion matrix
 print("\nConfusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
 
