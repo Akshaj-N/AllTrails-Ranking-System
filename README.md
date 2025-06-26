@@ -20,13 +20,6 @@ AllTrails' difficulty ratings are often vague or inconsistent, underestimating t
 
 ## Repository Structure
 
-data/ - Contains CSV files (raw and preprocessed)  
-scripts/ - Python scripts for preprocessing, training, and evaluation  
-fnn/ - Code and models for Feedforward Neural Network  
-gbdt/ - Code for Gradient Boosting models  
-umap/ - UMAP and clustering code  
-README.md - This file  
-requirements.txt - Python dependencies
 
 ```plaintext
 CS5100_Project/
@@ -112,7 +105,7 @@ Follow these steps to set up and run the project locally.
 
    python gbdt/predict_survey_trails.py
 
-   **_c.(iii) Train the Unsupervised Machine Learning:_**
+   **_c. Train the Unsupervised Machine Learning:_**
 
    python umap/umap_clustering.py
 
@@ -122,7 +115,6 @@ Follow these steps to set up and run the project locally.
 
 ## Contributors
 
-Hannah Wilcox
-Harika Bale
+Hannah Wilcox  
+Harika Bale  
 Akshaj Nevgi
-```
