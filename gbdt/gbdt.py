@@ -78,8 +78,25 @@ print("Classification Report:")
 print(classification_report(y_test, y_pred))
 
 # Confusion matrix
-print("\nConfusion Matrix:")
-print(confusion_matrix(y_test, y_pred))
+# loading the predictions
+df = pd.read_csv('model_predictions.csv')
+
+# creating the confusion matrix
+y_true = df['true_label']
+y_pred = df['predicted_label']
+conf_matrix = confusion_matrix(y_true, y_pred)
+
+# plotting the confusion matrix
+class_names = ['Easy', 'Medium', 'Hard', 'Very Hard'] 
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot = True, fmt = 'd', cmap = 'Blues', xticklabels = class_names, yticklabels = class_names)
+plt.xlabel('Predicted Labels')
+plt.ylabel('True Labels')
+plt.title('Confusion Matrix')
+plt.tight_layout()
+plt.savefig("confusion_matrix_gbdt.png")
+plt.show()
+
 
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy * 100:.2f}%")
