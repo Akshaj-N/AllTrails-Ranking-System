@@ -67,7 +67,7 @@ CS5100_Project/
 ├── .gitignore                       # Files/directories to be ignored by Git
 ├── README.md                        # Project overview and setup guide
 ├── requirements.txt                 # List of required Python packages
-
+```
 
 ## Installation & Setup
 
