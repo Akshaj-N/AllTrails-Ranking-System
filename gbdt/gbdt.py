@@ -8,8 +8,8 @@ from scipy.special import softmax
 import joblib
 
 # loading the dataset
-data = pd.read_csv('alltrails-data.csv')
-chatgpt_ratings = pd.read_csv('ChatGPT_scores.csv')
+data = pd.read_csv('../data/alltrails-data.csv')
+chatgpt_ratings = pd.read_csv('../data/ChatGPT_scores.csv')
 
 data = data.merge(chatgpt_ratings[['trail_id', 'difficulty_rating']], on='trail_id', suffixes=('', '_label'))
 data = data.dropna(subset=['difficulty_rating_label'])
