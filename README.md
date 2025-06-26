@@ -63,15 +63,19 @@ Follow these steps to set up and run the project locally.
 
    python fnn/fnn_classifier.py
 
-   **_b. Train the Gradient Boosting Decision Tree:_**
+   **_b.(i) Train the Gradient Boosting Decision Tree:_**
 
-   python fnn/gdbt.py
+   python gbdt/gdbt.py
 
+   **_b.(ii) Predict the trails using GBDT:_**
+
+   python gbdt/predict_survey_trails.py
+   
    **_c. Train the Unsupervised Machine Learning:_**
 
    python fnn/fnn_classifier.py
 
-6. **Run predictions on survey trails:**
+7. **Run predictions on survey trails:**
 
    python scripts/predict_survey.py
 
