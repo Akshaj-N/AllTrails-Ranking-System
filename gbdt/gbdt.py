@@ -97,7 +97,6 @@ plt.tight_layout()
 plt.savefig("confusion_matrix_gbdt.png")
 plt.show()
 
-
 accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy * 100:.2f}%")
 
