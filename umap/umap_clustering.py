@@ -146,10 +146,11 @@ print(f"Accuracy of UMAP matching AllTrails: {accuracy_AT:.2%}")
 
 # Classification report
 report = classification_report(df_pred["GPT Prediction"], df_pred["UMAP Prediction"], digits=2)
-print(report)
+print(f"Classification report:", report)
 
+# Confusion Matrix
 conf_mat = confusion_matrix(df_pred["GPT Prediction"], df_pred["UMAP Prediction"])
-print(conf_mat)
+print(f"Confusion Matrix:", conf_mat)
 
 
 # ---------- SURVEY DATA ----------------
