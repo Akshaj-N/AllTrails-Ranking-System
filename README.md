@@ -1,10 +1,10 @@
 # Trail Difficulty Estimation Using AI
 
-This project predicts the difficulty of hiking trails using structured trail metadata and user-generated content. We explore three modeling approaches -- Feedforward Neural Networks (FNN), Gradient Boosting Decision Trees (GBDT), and Unsupervised Learning to classify trails into four difficulty levels. The project uses data from AllTrails and custom-labeled datasets (ChatGPT).
+This project predicts the difficulty of hiking trails using structured trail metadata and user-generated content. We explore three modeling approaches -- Feedforward Neural Networks (FNN), Gradient Boosting Decision Trees (GBDT) and Unsupervised Learning to classify trails into four difficulty levels. The project uses data from AllTrails and custom-labeled datasets (ChatGPT).
 
 ## Motivation
 
-AllTrails' difficulty ratings are often vague or inconsistent, underestimating the challenge of certain hikes. Our project aims to provide a more accurate and data-driven classification of trail difficulty by leveraging metadata, user experiences, and machine learning techniques.
+AllTrails' difficulty ratings are often vague or inconsistent, underestimating the challenge of certain hikes. Our project aims to provide a more accurate and data-driven classification of trail difficulty by leveraging metadata, user experiences and machine learning techniques.
 
 ## Data Sources
 
@@ -48,7 +48,7 @@ CS5100_Project/
 ├── scripts/
 │   ├── __init__.py                  # Makes scripts directory a Python package
 │   ├── Model_Accuracy_survey.png    # Comparison of model accuracies on survey trails
-│   ├── preprocess_data.py           # Script to load, merge, clean, and engineer features
+│   ├── preprocess_data.py           # Script to load, merge, clean and engineer features
 │   ├── survey_results.py            # Aggregates model predictions and compares with survey results
 ├── umap/
 │   ├── Alltrails_in_UMAP.png        # UMAP visualization for all trails
@@ -87,7 +87,7 @@ Follow these steps to set up and run the project locally.
 
    pip install -r requirements.txt
 
-4. **Run data preprocessing to prepare training, testing, and survey datasets:**
+4. **Run data preprocessing to prepare training, testing and survey datasets:**
 
    python scripts/preprocess_data.py
 
